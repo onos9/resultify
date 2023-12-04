@@ -1,35 +1,18 @@
+import type { Comment, Rating, Record, Remark, Result, Score } from "@prisma/client";
 import { writable } from "svelte/store";
-import type {
-  Class,
-  Result,
-  Student,
-  Grade,
-  Subject,
-  Rating,
-  Score,
-  Remark,
-  Record,
-  Comment,
-} from "@prisma/client";
-import { browser } from "$app/environment";
+import type { ClassDetail, StudentDetail } from "../../app";
 
-export const grades = writable<Grade[]>([]);
-export const classes = writable<Class[]>([]);
-export const subjects = writable<Subject[]>([]);
 export const comments = writable<Comment[]>([]);
 
-// const defaultValue: any = null;
-// const initialStudent = JSON.parse(browser ? localStorage.rStudent ?? defaultValue : defaultValue);
-// const initialResult = JSON.parse(browser ? localStorage.result ?? defaultValue : defaultValue);
+export const classDetail = writable<ClassDetail | undefined>();
+export const student = writable<StudentDetail | undefined>();
+export const students = writable<StudentDetail[] | []>();
+export const subjects = writable<any[]>([]);
+export const grades = writable<any[]>([]);
 
-export const students = writable<Student[]>();
-export const student = writable<(Student & { Class: Class }) | Student | null>();
-
-export const rStudent = writable<any>();
-export const rStudents = writable<any[]>();
 export const results = writable<
   (Result & {
-    student: Student | null;
+    student: StudentDetail | null;
     ratings: Rating[];
     records: Record[];
     scores: Score[];
@@ -39,7 +22,7 @@ export const results = writable<
 
 export const result = writable<
   | (Result & {
-      student: Student | null;
+      student: StudentDetail | null;
       ratings: Rating[];
       records: Record[];
       scores: Score[];

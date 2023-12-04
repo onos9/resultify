@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import { user } from "$lib/stores/user";
-  import type { Objective, Subject } from "@prisma/client";
+  import type { Objective } from "@prisma/client";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -38,7 +38,7 @@
             {#each objectives as objective, i}
               <tr>
                 <th>{i + 1}</th>
-                <td class="uppercase">{objective.name}</td>
+                <td class="uppercase">{objective.subject_name}</td>
                 <td>
                   <ul class="list-disc">
                     {#each objective.text?.split("|") || [] as obj}
@@ -75,12 +75,42 @@
     <div class="font-bold text-sm mb-5">Learning Objectives</div>
     <div class="mt-5 md:col-span-2 md:mt-0">
       <select required name="name" class="select select-bordered w-full mb-3">
-        <option disabled selected>Objectives For</option>
-        <option>PREPARATORY</option>
-        <option>KINDERGARTEN</option>
-        <option>GRADE K</option>
-        <option>CRECH</option>
+        <option disabled selected>Subject</option>
+        <!-- {#each subjects as subject}
+          <option>{subject.name}</option>
+        {/each} -->
       </select>
+
+      <fieldset class="mb-4">
+        <legend class="contents text-sm font-semibold leading-6">Class</legend>
+        <p class="text-sm text-gray-500">Select the class for this learning objective</p>
+        <div class="mt-4 space-y-4">
+          <div class="flex items-center">
+            <input type="radio" name="radio-1" class="radio" />
+            <label for="push-everything" class="ml-3 block text-sm font-medium leading-6">
+              PREPARATORY
+            </label>
+          </div>
+          <div class="flex items-center">
+            <input type="radio" name="radio-1" class="radio" />
+            <label for="push-email" class="ml-3 block text-sm font-medium leading-6">
+              KINDERGARTEN
+            </label>
+          </div>
+          <div class="flex items-center">
+            <input type="radio" name="radio-1" class="radio" />
+            <label for="push-nothing" class="ml-3 block text-sm font-medium leading-6">
+              GRADE K
+            </label>
+          </div>
+          <div class="flex items-center">
+            <input type="radio" name="radio-1" class="radio" />
+            <label for="push-nothing" class="ml-3 block text-sm font-medium leading-6">
+              CRECH
+            </label>
+          </div>
+        </div>
+      </fieldset>
 
       <div class="form-control mb-3">
         <textarea

@@ -161,8 +161,10 @@ export const primary = {
 
   remark: {
     headTeacher: "	Good job you have the potential to do better next time if you put in more effort",
-    classTeacher: "A good performance, but you can still do better work. You are promoted to the next class",
-    recommendation: "A good performance, but you can still do better work. You are promoted to the next class",
+    classTeacher:
+      "A good performance, but you can still do better work. You are promoted to the next class",
+    recommendation:
+      "A good performance, but you can still do better work. You are promoted to the next class",
   },
 };
 
@@ -258,7 +260,6 @@ export const eyfs = {
       grade: undefined,
       action: "edit",
     },
-    
   ],
   scores: {
     total: 1296,
@@ -271,8 +272,10 @@ export const eyfs = {
 
   remark: {
     headTeacher: "	Good job you have the potential to do better next time if you put in more effort",
-    classTeacher: "A good performance, but you can still do better work. You are promoted to the next class",
-    recommendation: "A good performance, but you can still do better work. You are promoted to the next class",
+    classTeacher:
+      "A good performance, but you can still do better work. You are promoted to the next class",
+    recommendation:
+      "A good performance, but you can still do better work. You are promoted to the next class",
   },
 };
 
@@ -418,7 +421,9 @@ export const gradek = {
 
   remark: {
     headTeacher: "	Good job you have the potential to do better next time if you put in more effort",
-    classTeacher: "A good performance, but you can still do better work. You are promoted to the next class",
-    recommendation: "A good performance, but you can still do better work. You are promoted to the next class",
+    classTeacher:
+      "A good performance, but you can still do better work. You are promoted to the next class",
+    recommendation:
+      "A good performance, but you can still do better work. You are promoted to the next class",
   },
 };

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { browser } from "$app/environment";
   import { enhance } from "$app/forms";
-  import { rStudent, rStudents, students, student } from "$lib/stores/data_store";
+  import { classDetail, student, students } from "$lib/stores/data_store";
   import { user } from "$lib/stores/user";
 
   let isNetAlert: boolean = false;
@@ -10,12 +10,12 @@
   let disabled: boolean = true;
   let loading: boolean = true;
 
-  $: if (browser && $rStudent) {
-    const id = String($rStudent.admission_no).padStart(4, "0");
-    const year = $rStudent.year.slice(1, 3);
-    const school = $rStudent.school_code;
+  $: if (browser && $student) {
+    const id = String($student.admission_no).padStart(4, "0");
+    const year = $student.session_year.slice(1, 3);
+    const school = $student.school_code;
     admin_no = `${year}${school}-${id}`;
-    disabled = !!$rStudent && !!$student;
+    disabled = !!$student && !!$student;
 
     // console.log({ admin_no, id, $student,disabled });
   }
@@ -34,11 +34,11 @@
           };
         }}
       >
-        <input hidden value={$user?.classId} name="classId" type="text" />
+        <input hidden value={$classDetail?.class_id} name="classId" type="text" />
         <input hidden value={$user?.id} name="userId" type="text" />
-        <input hidden value={$rStudent?.full_name} name="fullName" type="text" />
-        <input hidden value={`${$rStudent?.id}/${admin_no}`} name="admissionNo" />
-        <input hidden value={$rStudent?.parents?.guardians_email} name="parentEmail" />
+        <input hidden value={$student?.full_name} name="fullName" type="text" />
+        <input hidden value={`${$student?.id}/${admin_no}`} name="admissionNo" />
+        <input hidden value={$student?.parents?.guardians_email} name="parentEmail" />
         <button hidden {disabled} class="btn btn-primary mb-3">
           <span class:hidden={loading} class="loading loading-spinner loading-sm" />
           Add Student to class
@@ -56,6 +56,7 @@
             </div>
           </div>
         {/if}
+
         <div class="overflow-x-auto md:overflow-hidden">
           <table class="table">
             <thead>
@@ -69,7 +70,7 @@
               </tr>
             </thead>
             <tbody>
-              {#each $rStudents as student, i}
+              {#each $students as student, i}
                 <tr>
                   <td>{student.id}</td>
                   <td>
@@ -112,17 +113,17 @@
                   </td>
                   <td>
                     <span class="badge badge-sm badge-success">
-                      {`${student.school_code}${student.year.slice(-2)}-${String(
+                      {`${student.school_code}${student.session_year.slice(-2)}-${String(
                         student.admission_no
                       ).padStart(4, "0")}`}
                     </span>
                   </td>
                   <td>
-                    <!-- <form action="?/record&id={student.id}" method="post" use:enhance>
+                    <form action="?/record&id={student.id}" method="post" use:enhance>
                       <div class="tooltip" data-tip="Update">
                         <button class="i-bx:bxs-trash text-lg text-accent-focus" />
                       </div>
-                    </form> -->
+                    </form>
                   </td>
                 </tr>
               {/each}

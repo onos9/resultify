@@ -1,23 +1,19 @@
 <script lang="ts">
-  import { browser } from "$app/environment";
   import { enhance } from "$app/forms";
-  import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import { Rating, Remark, Scores, StudentInfo } from "$lib/components/result";
   import Records from "$lib/components/result/records.svelte";
   import { configs } from "$lib/stores/configs";
-  import { rStudents, results, students, result, rStudent, student } from "$lib/stores/data_store";
+  import { results, students, result, student, classDetail } from "$lib/stores/data_store";
   import { user } from "$lib/stores/user";
-  import type { Class, Student } from "@prisma/client";
+  import SelectStudent from "./select_student.svelte";
 
   let frame: HTMLIFrameElement;
-  let disabled: boolean;
-
   const onPrint = () => {
     // goto(`/print?id=${$student.id}&remoteId=${$rStudent?.id}`);
     // return;
-    const params = `?id=${$student?.id}&remoteId=${$rStudent?.id}`;
-    window.history.pushState(null, $student?.fullName as string, `${$page.url.href}${params}`);
+    const params = `?&id=${$student?.id}`;
+    window.history.pushState(null, $student?.full_name as string, `${$page.url.href}${params}`);
 
     frame.src = `/print${params}`;
     frame.onload = () => {
@@ -26,35 +22,8 @@
       content.focus();
       content.print();
       content.onafterprint = () =>
-        window.history.pushState(null, $student?.fullName as string, $page.url.href);
+        window.history.pushState(null, $student?.full_name as string, $page.url.href);
     };
-  };
-
-  const getStudent = (remoteId: number, admin_no: string) => {
-    $rStudent = $rStudents.find((std) => std.id === remoteId);
-    $student = $students.find((std) => std.admissionNo?.split("/")[0] == admin_no) as Student & {
-      Class: Class;
-    };
-
-    $result = $results.find(
-      (res) =>
-        $configs.term == res.term &&
-        $configs.academicYear == res.academicYear &&
-        res.studentId == $student?.id
-    ) as typeof $result;
-
-    disabled = !(!!$result && !!$student);
-  };
-
-  const isComplete = (id: string) => {
-    const result = $results.find(
-      (result) =>
-        result?.remoteId == id &&
-        result.term == $configs.term &&
-        result == $configs.academicYear &&
-        result.status == "uploaded"
-    );
-    return result?.status;
   };
 
   const newResult = () => {
@@ -68,19 +37,20 @@
 
 <iframe hidden class="w-full h-screen" bind:this={frame} title="printf" />
 
-{#if $rStudent?.id}
+{#if $student?.id}
   <div class="flex w-full justify-end mb-3">
-    <form action="?/result" method="post" use:enhance={newResult}>
+     <SelectStudent />
+    <!-- <form action="?/result" method="post" use:enhance={newResult}>
       <input hidden name="academicYear" value={$configs?.academicYear} type="text" />
       <input hidden name="term" value={$configs?.term} type="text" />
-      <input hidden name="classId" value={$user?.classId} type="text" />
+      <input hidden name="classId" value={$classDetail?.class_id} type="text" />
       <input hidden name="studentId" value={$student?.id} type="text" />
       <button disabled={!(!$result && !!$student)} class="btn btn-primary ms-1">
         New Result
       </button>
-    </form>
+    </form> -->
 
-    <button on:click={onPrint} class="btn btn-primary ms-1">Preview</button>
+    <button on:click={onPrint} class="btn btn-primary btn-sm ms-1">Preview</button>
   </div>
   <div class="mt-10 sm:mt-0">
     <div class="md:grid md:grid-cols-3 md:gap-6">
@@ -96,7 +66,7 @@
         <div class="card bg-base-100 shadow-sm md:w-full w-screen mb-4">
           <div class="card-body overflow-x-auto">
             {#if $result?.id}
-              <StudentInfo remote_student={$rStudent}/>
+              <StudentInfo />
             {/if}
           </div>
         </div>
@@ -119,8 +89,8 @@
         <div class="card bg-base-100 shadow-sm md:w-full w-screen mb-4">
           <div class="card-body overflow-x-auto">
             {#if $result?.id}
-              <Records records={$result?.records} resultId={$result?.id} />
-              <Scores/>
+              <!-- <Records records={$result?.records} resultId={$result?.id} />
+              <Scores/> -->
             {/if}
           </div>
         </div>
@@ -128,7 +98,7 @@
     </div>
   </div>
 
-  {#if $user?.arm == "primary"}
+  {#if $user?.departments?.name == "GRADERS"}
     <div class="divider" />
     <div class="mt-10 sm:mt-0">
       <div class="md:grid md:grid-cols-3 md:gap-6">
@@ -168,7 +138,7 @@
         <div class="card bg-base-100 shadow-sm md:w-full w-screen mb-4">
           <div class="card-body overflow-x-auto">
             {#if $result?.id}
-              <Remark remarks={$result?.remarks} resultId={$result?.id} />
+              <!-- <Remark remarks={$result?.remarks} resultId={$result?.id} /> -->
             {/if}
           </div>
         </div>
@@ -180,52 +150,7 @@
     <div class="i-bx:info-circle text-2xl" />
     <span>No student selected, click the button to select a student</span>
     <div>
-      <div class="dropdown dropdown-top md:dropdown-top md:dropdown-left">
-        <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-        <label for="" tabindex="0" class="btn btn-sm btn-primary rounded-btn">Select Student</label>
-        <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-        <ul
-          class="menu flex-row dropdown-content z-[1] p-2 shadow bg-base-200 rounded-box mt-4 overflow-y-auto h-96"
-        >
-          {#each $rStudents as student}
-            <li class="flex-row">
-              <a class="" href=" " on:click={() => getStudent(student.id, student.admission_no)}>
-                <div class="flex items-center space-x-3">
-                  {#if student?.student_photo}
-                    <div class="avatar">
-                      <div class="mask mask-squircle w-12 h-12">
-                        <img
-                          src={`https://llacademy.ng/${student?.student_photo}`}
-                          alt="Avatar Tailwind CSS Component"
-                        />
-                      </div>
-                    </div>
-                  {:else}
-                    <div class="avatar placeholder">
-                      <div class="bg-neutral-focus text-neutral-content mask mask-squircle w-12">
-                        <span class="text-xl">{student.full_name.charAt(0)}</span>
-                      </div>
-                    </div>
-                  {/if}
-                  <div class=" flex flex-col">
-                    <div class="font-bold">
-                      {student.full_name
-                        .replace(/ +(?= )/g, "")
-                        .split(" ")
-                        .slice(0, 2)
-                        .join(" ")}
-                    </div>
-                    <span class="text-sm opacity-50">{student.class_name}</span>
-                    <span class="badge badge-sm badge-accent badge-outline capitalize">
-                      {isComplete(student.id) ?? "Pending"}
-                    </span>
-                  </div>
-                </div>
-              </a>
-            </li>
-          {/each}
-        </ul>
-      </div>
+      <SelectStudent />
     </div>
   </div>
 {/if}

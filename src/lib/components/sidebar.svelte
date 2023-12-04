@@ -2,6 +2,8 @@
   import { routes } from "$lib/routes";
   import { user } from "$lib/stores/user";
   import Brand from "./brand.svelte";
+
+  // console.log({ routes });
 </script>
 
 <div class="drawer-side">
@@ -11,9 +13,9 @@
 
     <div class="h-4" />
     <nav class="pl-4 pr-4">
-      <ul class="menu menu-compact flex flex-col p-0 px-4 mb-4 w-full">
+      <!-- <ul class="menu menu-compact flex flex-col p-0 px-4 mb-4 w-full">
         <li><a href="/" class="uppercase mx-auto bg-base-300">Dashboard</a></li>
-      </ul>
+      </ul> -->
 
       {#each routes as route}
         <ul class="menu menu-compact flex flex-col p-0 px-4 pb-4">
@@ -21,7 +23,7 @@
           <li class="menu-title {route.name ? '' : 'hidden'}"><span>{route.name}</span></li>
           <li class={route.name ? "" : "hidden"} />
           {#each route.links as link}
-            {#if link.roles.includes($user?.role?.name ?? "")}
+            <!-- {#if link.roles.includes($user?.role?.name ?? "")} -->
               <li>
                 <a href={link.url} class="flex gap-4">
                   <span class="flex-1">{link.name}</span>
@@ -30,7 +32,7 @@
                   >
                 </a>
               </li>
-            {/if}
+            <!-- {/if} -->
           {/each}
         </ul>
       {/each}

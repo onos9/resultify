@@ -2,7 +2,7 @@
   import { browser } from "$app/environment";
   import { enhance } from "$app/forms";
   import { configs } from "$lib/stores/configs";
-  import { rStudent, results, student } from "$lib/stores/data_store";
+  import { students, results, student } from "$lib/stores/data_store";
 
   let isNetAlert: boolean = false;
   let message: string;

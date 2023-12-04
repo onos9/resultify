@@ -10,15 +10,16 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
   async default({ cookies, locals }) {
-    await db.user.update({
-      where: { email: locals.user?.email } as Prisma.UserWhereUniqueInput,
-      data: { userAuthToken: null },
-    });
+    // await db.user.update({
+    //   where: { email: locals.user?.email } as Prisma.UserWhereUniqueInput,
+    //   data: { userAuthToken: null },
+    // });
 
     // eat the cookie
     cookies.delete("session", { path: "/" });
+    cookies.delete("userDetails", { path: "/" });
 
-    locals.user = null;
+    // locals.user = null;
     // redirect the user
     throw redirect(302, "/login");
   },

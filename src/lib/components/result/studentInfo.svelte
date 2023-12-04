@@ -3,7 +3,6 @@
   import { configs } from "$lib/stores/configs";
   import { student } from "$lib/stores/data_store";
 
-  export let remote_student: any = null;
   let admin_no: string;
   let checked = false;
   let isCorrect: boolean;
@@ -96,7 +95,7 @@
   </table>
   <div class="avatar flex flex-col px-4 justify-center items-center">
     <div class="w-24 rounded-full ring ring-neutral print:ring-violet-900 ring-offset-2 mb-4">
-      <img src="/{$student?.avatarUrl}" alt=" " />
+      <img src="/{$student?.student_photo}" alt=" " />
     </div>
   </div>
 </div>
@@ -115,7 +114,7 @@
       <div class="">
         <div class="avatar flex flex-col p-0 px-4 justify-center items-center">
           <div class="w-24 rounded-full ring ring-neutral ring-offset-base-100 ring-offset-2 mb-4">
-            <img src="/{$student?.avatarUrl}" alt="" />
+            <img src="/{$student?.student_photo}" alt="" />
             <!-- <input hidden type="text" name="remoteId" value={remote_student?.id} /> -->
           </div>
         </div>

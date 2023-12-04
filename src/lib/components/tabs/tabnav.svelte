@@ -1,23 +1,25 @@
 <script lang="ts">
-  import { setContext } from "svelte";
+  import { page } from "$app/stores";
 
   export let active: number;
-  export let items: {
-    id:string;
-    title: string;
-    component: ConstructorOfATypedSvelteComponent;
-  }[];
-
-  //   $: setContext("active", active);
+  export let titles: string[];
+  $: pathname = $page.url.pathname.split("/").pop();
+  // $: console.log({ pathname: $page.url.pathname.split("/").pop() });
 </script>
 
 <div class="tabs">
-  {#each items as item, i}
-    <button
-      class="tab tab-bordered lg:mr-6 {active === i ? 'tab-active' : ''}"
+  {#each titles as title, i}
+    <a
+      href={`/generator/${title.toLowerCase()}`}
+      class:tab-active={pathname === title.toLowerCase()}
+      class="tab tab-bordered mr-6"
       on:click={() => (active = i)}
     >
-      {item.title}
-    </button>
+      <span class="capitalize">
+        {title}
+      </span>
+    </a>
   {/each}
 </div>
+
+

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import { grades } from "$lib/stores/data_store";
   import { user } from "$lib/stores/user";
   import type { Rating } from "@prisma/client";
   import { onMount } from "svelte";
@@ -43,7 +42,7 @@
   const onSubmit = async ({ form, action, data, cancel }: FormInput) => {
     if (ratingId) action.searchParams.set("id", ratingId);
     data.set("resultId", resultId);
-    data.set("arm", $user?.arm as string);
+    data.set("arm", $user?.departments.name as string);
     data.set("comment", comment);
 
     const range = Math.round((Number(rate) / 5) * 12);

@@ -1,16 +1,16 @@
 import type { Actions, PageServerLoad } from "./$types";
 import { db } from "$lib/server/database";
 import { fail, redirect } from "@sveltejs/kit";
-import type { Subject, Prisma, Objective } from "@prisma/client";
+import type { Objective } from "@prisma/client";
 
 export const load: PageServerLoad = async ({ locals }) => {
-  if (!locals.user?.arm) throw redirect(302, "/settings");
+  // if (!locals.user?.arm) throw redirect(302, "/settings");
 
-  const term = locals.configs.find((cfg) => cfg.key == "term");
-  let objectives = () => db.objective.findMany({ where: { term: term?.value } });
+  const exam_type = locals.configs?.exam_type;
+  let objectives = () => db.objective.findMany({ where: { exam_type } as any });
 
   return {
-    objectives: await objectives(),
+    objectives: objectives(),
   };
 };
 
@@ -18,18 +18,20 @@ export const actions: Actions = {
   objective: async ({ request, locals, url }) => {
     const id = url.searchParams.get("id") as string;
     const data = Object.fromEntries(await request.formData()) as any;
-    const term = locals.configs.find((cfg) => cfg.key == "term");
+    const exam_type = locals.configs.exam_type;
 
     let objective: Objective;
     try {
-      if (!id)
+      if (!id) {
         objective = await db.objective.create({
-          data: { ...data, arm: locals.user?.arm, term: term?.value },
+          data: { ...data, arm: locals.user?.arm, exam_type },
         });
-      else objective = await db.objective.update({ where: { id }, data });
+      } else {
+        objective = await db.objective.update({ where: { id }, data });
+      }
     } catch (err) {
       console.error(err);
-      return fail(500, { message: "Could not create the article." });
+      return fail(500, { message: "Could not create/update the objective." });
     }
 
     return { status: 200, objective };

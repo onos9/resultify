@@ -12,136 +12,64 @@ datasource db {
 }
 
 model Config {
-  id        String   @id @unique @default(uuid())
-  key       String   @unique
-  value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Role {
-  id    String @id @unique @default(uuid())
-  name  String @default("USER")
-  users User[]
-}
-
-model User {
   id            String   @id @unique @default(uuid())
-  firstName     String?
-  lastName      String?
-  email         String?  @unique
-  phone         String?
-  arm           String?
-  passwordHash  String?
-  userAuthToken String?  @unique
-  gender        String?
-  avatarUrl     String?
-  role          Role?    @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  roleId        String
-  address       String?
-  state         String?
-  city          String?
-  zip           String?
+  dept          String?
+  exam_type     String?
+  vacation_date String?
+  school_opened Int?
+  result_title  String
+  address       String
+  city          String
+  zip           String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  schoolId      String?
-  classId       String?
-  class         Class?   @relation(fields: [classId], references: [id])
-}
-
-model Class {
-  id        String    @id @unique @default(uuid())
-  userId    String
-  arm       String?
-  name      String?
-  section   String?
-  students  Student[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  User      User[]
-}
-
-model Student {
-  id           String   @id @unique @default(uuid())
-  remoteId     String?
-  fullName     String?
-  gender       String?
-  email        String?
-  avatarUrl    String?
-  location     String?
-  parentEmail  String?
-  classId      String
-  userId       String
-  admissionNo  String?
-  academicYear String?
-  present      String?
-  absent       String?
-  status       String?  @default("inProgress")
-  result       Result[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  Class        Class?   @relation(fields: [classId], references: [id], onDelete: Cascade)
-}
-
-model Subject {
-  id             String  @id @unique @default(uuid())
-  arm            String
-  classId        String?
-  name           String
-  max_ca         String?
-  max_report     String?
-  max_oral_point String?
-  max_exam       String?
-
-  objective   String?
-  objectiveId String?
-  obj         Objective? @relation(fields: [objectiveId], references: [id])
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
 }
 
 model Objective {
-  id        String    @id @unique @default(uuid())
-  arm       String?
-  term      String?
-  name      String?
-  text      String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Subject   Subject[]
+  id           String   @id @unique @default(uuid())
+  text         String?
+  subject_id   String
+  subject_name String
+  class_id     String
+  class_name   String
+  exam_type    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
-model Grade {
-  id        String   @id @unique @default(uuid())
-  arm       String?
-  classId   String?
-  point     String?
-  maxScore  String?  @default("0")
-  minScore  String?  @default("0")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model StudentInfo {
+  id           String   @id @default(uuid())
+  fullName     String
+  className    String
+  section      String
+  admissionNo  String
+  examType     String
+  schoolOpened String
+  daysAbsent   String
+  daysPresent  String
+  Result       Result[]
 }
 
 model Result {
-  id           String   @id @default(uuid())
-  term         String
-  lowest       String?
-  highest      String?
-  totalScore   String?
-  averageScore String?
-  academicYear String?
-  studentId    String
-  remoteId     String?
-  classId      String
-  status       String?  @default("pending")
-  resultUrl    String?
-  records      Record[]
-  scores       Score[]
-  ratings      Rating[]
-  remarks      Remark[]
-  student      Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             String      @id @default(uuid())
+  dept           String
+  exam_type      String
+  lowestAverage  String?
+  highestAverage String?
+  totalScore     String?
+  averageScore   String?
+  academicYear   String?
+  studentId      String
+  classId        String
+  status         String?     @default("pending")
+  resultUrl      String?
+  records        Record[]
+  ratings        Rating[]
+  remarks        Remark[]
+  student        StudentInfo @relation(fields: [studentInfoId], references: [id])
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  studentInfoId  String
 }
 
 model Record {
@@ -164,18 +92,18 @@ model Record {
   Result     Result?  @relation(fields: [resultId], references: [id], onDelete: Cascade)
 }
 
-model Score {
-  id        String   @id @unique @default(uuid())
-  arm       String
-  resultId  String
-  total     String?
-  average   String?
-  higest    String?
-  lowest    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Result    Result   @relation(fields: [resultId], references: [id], onDelete: Cascade)
-}
+// model Score {
+//   id        String   @id @unique @default(uuid())
+//   arm       String
+//   resultId  String
+//   total     String?
+//   average   String?
+//   higest    String?
+//   lowest    String?
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   Result    Result   @relation(fields: [resultId], references: [id], onDelete: Cascade)
+// }
 
 model Rating {
   id        String   @id @unique @default(uuid())

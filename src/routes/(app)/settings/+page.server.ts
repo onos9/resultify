@@ -4,10 +4,8 @@ import { writeFileSync } from "fs";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
-  const classes = await db.class.findMany();
   return {
     user: locals.user,
-    classes,
   };
 };
 
@@ -21,8 +19,6 @@ export const actions: Actions = {
     }
 
     try {
-      const user = await db.user.update({ where: { id }, data });
-      return { user };
     } catch (err) {
       console.error(err);
       return fail(500, {

@@ -6,7 +6,7 @@ import { db } from "$lib/server/database";
 import type { Prisma } from "@prisma/client";
 
 export const load: PageServerLoad = async ({ locals }) => {
-  if (locals.user) {
+  if (locals.userDetails) {
     throw redirect(302, "/");
   }
 };
@@ -47,4 +47,28 @@ const login: Action = async ({ cookies, request }) => {
   redirect(302, "/");
 };
 
-export const actions: Actions = { login };
+const authenticate: Action = async ({ cookies, request, fetch, locals }) => {
+  const { email, password } = Object.fromEntries(await request.formData());
+
+  let response = await fetch(`/api/auth`, {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+
+  const { data } = await response.json();
+  console.log({ data });
+
+  cookies.delete("session", { path: "/" });
+  const payload = JSON.parse(Buffer.from(data.accessToken.split(".")[1], "base64").toString());
+  cookies.set("session", data.accessToken as string, {
+    path: "/",
+    httpOnly: true,
+    sameSite: "strict",
+    secure: false,
+    maxAge: payload.exp,
+  });
+
+  redirect(302, "/");
+};
+
+export const actions: Actions = { login, authenticate };

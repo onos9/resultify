@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import { configs } from "$lib/stores/configs";
-  import { grades, results, subjects, result } from "$lib/stores/data_store";
+  import {  results, result } from "$lib/stores/data_store";
   import { user } from "$lib/stores/user";
   import type { Grade, Record } from "@prisma/client";
   import { onMount } from "svelte";

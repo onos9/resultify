@@ -36,7 +36,7 @@
             </div>
           </div>
         {/if}
-        <form action="?/login" method="post" use:enhance>
+        <form action="?/authenticate" method="post" use:enhance>
           <div class="relative  mb-4">
             <input
               name="email"

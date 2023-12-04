@@ -1,47 +1,26 @@
-import bcrypt from "bcrypt";
-import crypto from "crypto";
 import { Prisma, PrismaClient } from "@prisma/client";
 import bank from "./comments.js";
+import objs from "./obj.js";
 const prisma = new PrismaClient();
 
-const createUser = async () => {
-  const count = await prisma.user.count();
+const createObjectives = async () => {
+  const count = await prisma.comment.count();
   if (count > 0) return;
 
-  const role = await prisma.role.create({
-    data: { name: "SUPER_ADMIN" },
-  });
-
-  const user = await prisma.user.create({
-    data: {
-      email: "onosbrown.saved@gmail.com",
-      firstName: "Brown",
-      lastName: "Onojeta",
-      passwordHash: await bcrypt.hash("Passwoerd", 10),
-      userAuthToken: crypto.randomUUID(),
-      roleId: role.id,
-    },
-  });
-};
-
-const clearUser = async () => {
-  const roles = await prisma.role.findMany();
   prisma.$transaction(
-    roles.map((role) =>
-      prisma.role.delete({
-        where: { id: role.id },
+    objs.map((obj) =>
+      prisma.objectives.create({
+        data: {
+          text: obj.text,
+          class_id: obj.class_id,
+          class_name: obj.class_name,
+          subject_id: obj.subject_id,
+          subject_name: obj.subject,
+          exam_type: "FIRST TERM EXAMINATION - NOV/2023",
+        },
       })
     )
   );
-
-  // const users = await prisma.user.findMany();
-  // prisma.$transaction(
-  //   users.map((user) =>
-  //     prisma.config.delete({
-  //       where: { id: user.id },
-  //     })
-  //   )
-  // );
 };
 
 const createComment = async () => {
@@ -63,40 +42,7 @@ const createComment = async () => {
   );
 };
 
-const clearComment = async () => {
-  const comment = await prisma.comment.findMany();
-  prisma.$transaction(
-    comment.map((comment) =>
-      prisma.comment.delete({
-        where: { id: comment.id },
-      })
-    )
-  );
-};
-
-const createConfig = async () => {
-  prisma.$transaction([
-    prisma.config.create({
-      data: {
-        key: "comment_tags",
-        value: bank.tags.map((tag) => tag.tag).join(","),
-      },
-    }),
-  ]);
-};
-
-const clearConfig = async () => {
-  const configs = await prisma.config.findMany();
-  prisma.$transaction(
-    configs.map((config) =>
-      prisma.config.delete({
-        where: { id: config.id },
-      })
-    )
-  );
-};
-
-createUser()
+createObjectives()
   .then(async () => {
     await prisma.$disconnect();
   })

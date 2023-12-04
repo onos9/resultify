@@ -1,34 +1,37 @@
 import { db } from "$lib/server/database";
-import type { Class, Role, User } from "@prisma/client";
 import type { Handle } from "@sveltejs/kit";
+import { cache, nodeCache } from "$lib/server/cache";
 
 export const handle: Handle = async ({ event, resolve }) => {
-  // get cookies from browser
-  const session = event.cookies.get("session");
+  const session = event.cookies.get("session") as string;
   if (!session) {
-    // if there is no session load page as normal
     return await resolve(event);
   }
 
-  // find the user based on the session
-  const user = await db.user.findUnique({
-    where: { userAuthToken: session },
-    include: { role: true, class: true },
-  });
-
-  // console.log(user)
-
-  const configs = await db.config.findMany();
-  // console.log(configs)
-
-  // if `user` exists set `events.local`
-  if (user) {
-    const { passwordHash, ...rest } = user;
-    event.locals.user = rest as (User & { role: Role } & { class: Class }) | null;
+  nodeCache.flushAll()
+  try {
+    const payload = JSON.parse(Buffer.from(session.split(".")[1], "base64").toString());
+    if (!nodeCache.has(session)) {
+      let res = await fetch(`https://llacademy.ng/api/staff-view/${payload.sub}`, {
+        headers: {
+          Authorization: session,
+        },
+      });
+      const { data } = await res.json();
+      event.locals.userDetails = data.staffDetails;
+      nodeCache.set(session, data.staffDetails);
+    } else {
+      event.locals.userDetails = nodeCache.get(session) as UserDetail;
+      // console.log({ user: event.locals.userDetails });
+    }
+  } catch (error: any) {
+    console.log({ error: error });
   }
 
+  const configs = await db.config.findMany();
+
   if (configs.length) {
-    event.locals.configs = configs;
+    event.locals.configs = configs[0];
   }
 
   const theme = event.url.pathname.includes("print") ? "light" : "night";
@@ -36,10 +39,3 @@ export const handle: Handle = async ({ event, resolve }) => {
     transformPageChunk: ({ html }) => html.replace("%theme%", theme),
   });
 };
-
-function exclude<User, Key extends keyof User>(user: User, keys: Key[]): Omit<User, Key> {
-  for (let key of keys) {
-    delete user[key];
-  }
-  return user;
-}

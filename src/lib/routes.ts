@@ -1,35 +1,29 @@
 export const routes = [
   {
-    name: "Result Management",
+    name: "Result Generator",
     links: [
       {
-        name: "Class Rooms",
+        name: "Students",
         badge: null,
-        url: "/classes",
+        url: "/generator",
         roles: ["SUPER_ADMIN", "ADMIN"],
       },
-      // {
-      //   name: "Students",
-      //   badge: null,
-      //   url: "/students",
-      //   roles: ["SUPER_ADMIN", "ADMIN", "USER"],
-      // },
       {
         name: "Objectives",
         badge: null,
-        url: "/objectives",
+        url: "/generator/objectives",
         roles: ["SUPER_ADMIN", "ADMIN"],
       },
       {
-        name: "Subjects",
+        name: "Results",
         badge: null,
-        url: "/subjects",
+        url: "/generator/results",
         roles: ["SUPER_ADMIN", "ADMIN"],
       },
       {
-        name: "Grade System",
+        name: "Template",
         badge: null,
-        url: "/grade",
+        url: "/generator/template",
         roles: ["SUPER_ADMIN", "ADMIN", "USER"],
       },
     ],

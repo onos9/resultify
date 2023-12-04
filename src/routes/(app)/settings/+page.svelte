@@ -5,9 +5,6 @@
   import Personal from "./personal.svelte";
   import School from "./school.svelte";
 
-  const roles = ["SUPER_ADMIN", "ADMIN"];
-  export let data: PageData;
-  $: ({ classes } = data);
 
   export let form: ActionData;
   let loaded: boolean;
@@ -17,12 +14,12 @@
   }
 </script>
 
-<Personal {classes} id={form?.user?.classId} />
+<Personal id={form?.user?.classId} />
 
 <div class="divider" />
-{#if roles.includes($user?.role?.name ?? "")}
+<!-- {#if roles.includes($user?.role?.name ?? "")} -->
   <School {loaded} />
   <div class="divider" />
-{/if}
+<!-- {/if} -->
 
 <!-- <Notification /> -->
